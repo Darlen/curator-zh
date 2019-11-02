@@ -56,7 +56,7 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Test(groups = {CuratorTestBase.zk35Group, CuratorTestBase.zk35TestCompatibilityGroup})
+@Test(groups = CuratorTestBase.zk35TestCompatibilityGroup)
 public class TestReconfiguration extends CuratorTestBase
 {
     private final Timing2 timing = new Timing2();
