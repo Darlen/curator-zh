@@ -19,7 +19,6 @@
 package org.apache.curator.test.compatibility;
 
 import org.apache.curator.test.BaseClassForTests;
-import org.testng.annotations.Listeners;
 
 public class CuratorTestBase extends BaseClassForTests
 {
