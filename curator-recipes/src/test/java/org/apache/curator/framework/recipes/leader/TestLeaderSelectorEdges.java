@@ -26,6 +26,7 @@ import org.apache.curator.framework.api.CuratorEvent;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.retry.RetryNTimes;
 import org.apache.curator.test.BaseClassForTests;
+import org.apache.curator.test.compatibility.CuratorTestBase;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.server.ServerCnxnFactory;
@@ -41,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Test cases designed after CURATOR-45
  */
+@Test(groups = CuratorTestBase.zk35Group)
 public class TestLeaderSelectorEdges extends BaseClassForTests
 {
     private final Logger log = LoggerFactory.getLogger(getClass());
