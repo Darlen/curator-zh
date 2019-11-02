@@ -196,8 +196,16 @@ public interface CuratorFramework extends Closeable
      * Start a remove watches builder.
      *
      * @return builder object
+     * @deprecated use {@link #watchers()} in ZooKeeper 3.6+
      */
     public RemoveWatchesBuilder watches();
+
+    /**
+     * Start a watches builder.
+     *
+     * @return builder object
+     */
+    public WatchesBuilder watchers();
 
     /**
      * Returns the listenable interface for the Connect State
