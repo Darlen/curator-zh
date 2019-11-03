@@ -60,4 +60,12 @@ public interface CuratorCacheBuilder
      * @return new Curator Cache
      */
     CuratorCache build();
+
+    /**
+     * Return a new bridge cache based on the builder methods that have been called.
+     *
+     * @param cacheData if true, keep the data bytes cached. If false, clear them after sending notifications
+     * @return new bridge cache
+     */
+    CuratorCacheBridge buildBridge(boolean cacheData);
 }

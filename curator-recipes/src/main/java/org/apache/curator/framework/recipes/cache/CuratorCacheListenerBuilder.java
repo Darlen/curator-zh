@@ -22,6 +22,7 @@ package org.apache.curator.framework.recipes.cache;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.recipes.cache.CuratorCacheListener.Type;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 public interface CuratorCacheListenerBuilder
 {
@@ -88,9 +89,11 @@ public interface CuratorCacheListenerBuilder
      *
      * @param client the curator client
      * @param listener the listener to wrap
-     * @return a CuratorCacheListener that forwards to the given listener
+     * @param basePath the path used as the root in the cache. Only events with a parent path matching this
+     *                 base path are sent to the listener
+     * @return this
      */
-    CuratorCacheListenerBuilder forPathChildrenCache(CuratorFramework client, PathChildrenCacheListener listener);
+    CuratorCacheListenerBuilder forPathChildrenCache(CuratorFramework client, PathChildrenCacheListener listener, String basePath);
 
     /**
      * Bridge listener. You can reuse old-style {@link org.apache.curator.framework.recipes.cache.TreeCacheListener}s
@@ -101,7 +104,7 @@ public interface CuratorCacheListenerBuilder
      *
      * @param client the curator client
      * @param listener the listener to wrap
-     * @return a CuratorCacheListener that forwards to the given listener
+     * @return this
      */
     CuratorCacheListenerBuilder forTreeCache(CuratorFramework client, TreeCacheListener listener);
 
@@ -110,15 +113,26 @@ public interface CuratorCacheListenerBuilder
      * with CuratorCache.
      *
      * @param listener the listener to wrap
-     * @return a CuratorCacheListener that forwards to the given listener
+     * @return this
      */
     CuratorCacheListenerBuilder forNodeCache(NodeCacheListener listener);
 
     /**
      * Make the built listener so that it only becomes active once {@link CuratorCacheListener#initialized()} has been called.
      * i.e. changes that occur as the cache is initializing are not sent to the listener
+     *
+     * @return this
      */
     CuratorCacheListenerBuilder afterInitialized();
+
+    /**
+     * Make the built listener so that it is only called for paths that return true when applied
+     * to the given filter.
+     *
+     * @param pathFilter path filter
+     * @return this
+     */
+    CuratorCacheListenerBuilder withPathFilter(Predicate<String> pathFilter);
 
     /**
      * Build and return a new listener based on the methods that have been previously called

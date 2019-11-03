@@ -23,6 +23,7 @@ import org.apache.curator.x.discovery.details.InstanceProvider;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * The main API for Discovery. This class is essentially a facade over a {@link ProviderStrategy}
@@ -31,11 +32,24 @@ import java.util.Collection;
 public interface ServiceProvider<T> extends Closeable
 {
     /**
-     * The provider must be started before use
+     * The provider must be started before use. This method blocks while the internal
+     * cache is loaded.
      *
      * @throws Exception any errors
      */
-    public void start() throws Exception;
+    void start() throws Exception;
+
+    /**
+     * The provider must be started before use. This version returns immediately.
+     * Use the returned latch to block until the cache is loaded
+     *
+     * @return a latch that can be used to block until the cache is loaded
+     * @throws Exception errors
+     */
+    default CountDownLatch startImmediate() throws Exception
+    {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Return an instance for a single use. <b>IMPORTANT: </b> users
@@ -44,7 +58,7 @@ public interface ServiceProvider<T> extends Closeable
      * @return the instance to use
      * @throws Exception any errors
      */
-    public ServiceInstance<T> getInstance() throws Exception;
+    ServiceInstance<T> getInstance() throws Exception;
 
     /**
      * Return the current available set of instances <b>IMPORTANT: </b> users
@@ -53,7 +67,7 @@ public interface ServiceProvider<T> extends Closeable
      * @return all known instances
      * @throws Exception any errors
      */
-    public Collection<ServiceInstance<T>> getAllInstances() throws Exception;
+    Collection<ServiceInstance<T>> getAllInstances() throws Exception;
 
     /**
      * Take note of an error connecting to the given instance. The instance will potentially
@@ -61,7 +75,7 @@ public interface ServiceProvider<T> extends Closeable
      *
      * @param instance instance that had an error
      */
-    public void noteError(ServiceInstance<T> instance);
+    void noteError(ServiceInstance<T> instance);
 
     /**
      * Close the provider. Note: it's the provider's responsibility to close any caches it manages

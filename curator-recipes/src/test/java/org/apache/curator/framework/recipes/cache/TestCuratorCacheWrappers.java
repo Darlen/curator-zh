@@ -56,7 +56,7 @@ public class TestCuratorCacheWrappers extends CuratorTestBase
                         events.offer(event.getType());
                     }
                 };
-                cache.listenable().addListener(builder().forPathChildrenCache(client, listener).build());
+                cache.listenable().addListener(builder().forPathChildrenCache(client, listener, "/test").build());
                 cache.start();
 
                 client.create().forPath("/test/one", "hey there".getBytes());

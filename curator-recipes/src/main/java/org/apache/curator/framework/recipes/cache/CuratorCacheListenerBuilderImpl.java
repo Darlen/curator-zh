@@ -20,14 +20,17 @@
 package org.apache.curator.framework.recipes.cache;
 
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.utils.ZKPaths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 class CuratorCacheListenerBuilderImpl implements CuratorCacheListenerBuilder
 {
     private final List<CuratorCacheListener> listeners = new ArrayList<>();
     private boolean afterInitializedOnly = false;
+    private Predicate<String> pathFilter = __ -> true;
 
     @Override
     public CuratorCacheListenerBuilder forAll(CuratorCacheListener listener)
@@ -106,8 +109,9 @@ class CuratorCacheListenerBuilderImpl implements CuratorCacheListenerBuilder
     }
 
     @Override
-    public CuratorCacheListenerBuilder forPathChildrenCache(CuratorFramework client, PathChildrenCacheListener listener)
+    public CuratorCacheListenerBuilder forPathChildrenCache(CuratorFramework client, PathChildrenCacheListener listener, String basePath)
     {
+        pathFilter = p -> ZKPaths.getPathAndNode(p).getPath().equals(basePath);
         listeners.add(new PathChildrenCacheListenerWrapper(client, listener));
         return this;
     }
@@ -134,6 +138,13 @@ class CuratorCacheListenerBuilderImpl implements CuratorCacheListenerBuilder
     }
 
     @Override
+    public CuratorCacheListenerBuilder withPathFilter(Predicate<String> pathFilter)
+    {
+        this.pathFilter = (pathFilter != null) ? (p -> (p == null) || pathFilter.test(p)) : (__ -> true);
+        return this;
+    }
+
+    @Override
     public CuratorCacheListener build()
     {
         List<CuratorCacheListener> copy = new ArrayList<>(listeners);
@@ -146,7 +157,11 @@ class CuratorCacheListenerBuilderImpl implements CuratorCacheListenerBuilder
             {
                 if ( isInitialized )
                 {
-                    copy.forEach(l -> l.event(type, oldData, data));
+                    ChildData filterData = (data != null) ? data : oldData;
+                    if ( pathFilter.test(filterData.getPath()) )
+                    {
+                        copy.forEach(l -> l.event(type, oldData, data));
+                    }
                 }
             }
 

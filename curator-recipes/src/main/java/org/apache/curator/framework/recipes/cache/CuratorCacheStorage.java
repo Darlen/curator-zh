@@ -92,6 +92,7 @@ public interface CuratorCacheStorage
     /**
      * Return a stream over the storage entries that are the immediate children of the given node.
      *
+     * @param fromParent the parent node - determines the children returned in the stream
      * @return stream over entries
      */
     Stream<ChildData> streamImmediateChildren(String fromParent);

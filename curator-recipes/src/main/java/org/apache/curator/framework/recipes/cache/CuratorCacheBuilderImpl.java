@@ -19,7 +19,9 @@
 
 package org.apache.curator.framework.recipes.cache;
 
+import com.google.common.base.Preconditions;
 import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.utils.Compatibility;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -68,6 +70,23 @@ class CuratorCacheBuilderImpl implements CuratorCacheBuilder
 
     @Override
     public CuratorCache build()
+    {
+        return internalBuild(storage);
+    }
+
+    @Override
+    public CuratorCacheBridge buildBridge(boolean cacheData)
+    {
+        Preconditions.checkArgument(storage == null, "Custom CuratorCacheStorage is not supported by the TreeCache bridge");
+        if ( Compatibility.hasPersistentWatchers() )
+        {
+            return internalBuild(cacheData ? null : CuratorCacheStorage.bytesNotCached());
+        }
+        Preconditions.checkArgument(exceptionHandler == null, "ExceptionHandler is not supported by the TreeCache bridge");
+        return new CompatibleCuratorCacheBridge(client, path, options, executor, cacheData);
+    }
+
+    private CuratorCacheImpl internalBuild(CuratorCacheStorage storage)
     {
         return new CuratorCacheImpl(client, storage, path, options, executor, exceptionHandler);
     }

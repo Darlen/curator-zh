@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadFactory;
 
 /**
@@ -74,6 +75,13 @@ public class ServiceProviderImpl<T> implements ServiceProvider<T>
     {
         cache.start();
         discovery.providerOpened(this);
+    }
+
+    @Override
+    public CountDownLatch startImmediate() throws Exception
+    {
+        discovery.providerOpened(this);
+        return cache.startImmediate();
     }
 
     /**
