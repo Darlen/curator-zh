@@ -13,7 +13,7 @@ Persistent/Recursive watchers.
 
 h2. ZooKeeper 3.5.x and ZooKeeper 3.4.x
 
-Curator 4.0 supports earlier versions of ZooKeeper in a soft\-compatibility mode. To use this mode
+Curator supports earlier versions of ZooKeeper in a soft\-compatibility mode. To use this mode
 you must exclude ZooKeeper when adding Curator to your dependency management tool.
 
 _Maven_
