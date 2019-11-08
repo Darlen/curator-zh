@@ -32,6 +32,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 
+@Test(groups = CuratorTestBase.zk36Group)
 public class TestPersistentWatcher extends CuratorTestBase
 {
     @Test

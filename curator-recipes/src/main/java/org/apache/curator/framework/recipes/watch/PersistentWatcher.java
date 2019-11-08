@@ -114,7 +114,7 @@ public class PersistentWatcher implements Closeable
             client.getConnectionStateListenable().removeListener(connectionStateListener);
             try
             {
-                client.watches().remove(watcher).guaranteed().inBackground().forPath(basePath);
+                client.watchers().remove(watcher).guaranteed().inBackground().forPath(basePath);
             }
             catch ( Exception e )
             {
@@ -140,7 +140,7 @@ public class PersistentWatcher implements Closeable
      *
      * @return listener container
      */
-    public StandardListenerManager<Runnable> getResetListenable()
+    public Listenable<Runnable> getResetListenable()
     {
         return resetListeners;
     }
@@ -150,13 +150,13 @@ public class PersistentWatcher implements Closeable
         try
         {
             BackgroundCallback callback = (__, event) -> {
-                if ( event.getResultCode() != KeeperException.Code.OK.intValue() )
+                if ( event.getResultCode() == KeeperException.Code.OK.intValue() )
                 {
-                    reset();
+                    resetListeners.forEach(Runnable::run);
                 }
                 else
                 {
-                    resetListeners.forEach(Runnable::run);
+                    reset();
                 }
             };
             client.watchers().add().withMode(recursive ? AddWatchMode.PERSISTENT_RECURSIVE : AddWatchMode.PERSISTENT).inBackground(callback).usingWatcher(watcher).forPath(basePath);
