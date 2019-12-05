@@ -33,6 +33,7 @@ public interface LeaderLatchListener
    *
    * Note that it is possible that by the time this method call happens, hasLeadership has fallen back to false.  If
    * this occurs, you can expect {@link #notLeader()} to also be called.
+   * //抢主成功时触发
    */
   public void isLeader();
 
@@ -41,6 +42,7 @@ public interface LeaderLatchListener
    *
    * Note that it is possible that by the time this method call happens, hasLeadership has become true.  If
    * this occurs, you can expect {@link #isLeader()} to also be called.
+   * //抢主失败时触发
    */
   public void notLeader();
 }

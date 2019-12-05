@@ -172,6 +172,7 @@ public class LeaderSelector implements Closeable
      * By default, when {@link LeaderSelectorListener#takeLeadership(CuratorFramework)} returns, this
      * instance is not requeued. Calling this method puts the leader selector into a mode where it
      * will always requeue itself.
+     * //在抢到leader权限并释放后，自动加入抢主队列，重新抢主
      */
     public void autoRequeue()
     {
@@ -570,6 +571,7 @@ public class LeaderSelector implements Closeable
             this.listener = listener;
         }
 
+        //抢主成功后的回调
         @Override
         public void takeLeadership(CuratorFramework client) throws Exception
         {
